@@ -2,13 +2,17 @@
 
 namespace app\controllers;
 
+use app\models\TestResults;
 use Yii;
+use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\UploadForm;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -61,7 +65,79 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $db = Yii::$app->db->getIsActive();
+        var_dump($db);
         return $this->render('index');
+    }
+
+    /**
+     * Displays upload form
+     * @return string
+     */
+    public function actionUpload()
+    {
+        $model = new UploadForm();
+        $badRows = [];
+        $goodRows = [];
+
+        if(Yii::$app->request->isPost) {
+            $model->csvFile = UploadedFile::getInstance($model, 'csvFile');
+            if($model->process()) {
+                $handle = fopen($model->csvFile->tempName, "r");
+                $firstRowFlag = true;
+
+                while (($data = fgetcsv($handle, 1000, ",")) !== false)
+                {
+                    if($firstRowFlag) {
+                        $firstRowFlag = false;
+                        continue;
+                    }
+                    $testTaker = $data[1] ?? '';
+                    $correctAnswer = $data[2] ?? 0;
+                    $incorrectAnswer = $data[3] ?? 0;
+                    if($testTaker && $correctAnswer && $incorrectAnswer){
+                        $testResults = new TestResults();
+                        $testResults->test_taker = $testTaker;
+                        $testResults->correct_answers = $correctAnswer;
+                        $testResults->incorrect_answers = $incorrectAnswer;
+                        if($testResults->save()) {
+                            $goodRows[] = $testTaker;
+                        } else {
+                            if($testResults->getErrors('test_taker')) {
+                                $badRows[] = $testTaker;
+                            }
+                        }
+                    }
+                }
+                if(!$badRows) {
+                    Yii::$app->session->setFlash('fileSuccessfullyProcessed', count($goodRows));
+                } else {
+                    Yii::$app->session->setFlash('fileNotSuccessfullyProcessed', [
+                        'good' => count($goodRows),
+                        'bad' => implode(', ', $badRows),
+                        'badCount' => count($badRows)
+                    ]);
+                }
+                return $this->refresh();
+            }
+        }
+
+        return $this->render('upload', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays grid
+     * @return string
+     */
+    public function actionList()
+    {
+
+
+        return $this->render('list', [
+//            'model' => $model,
+        ]);
     }
 
     /**
