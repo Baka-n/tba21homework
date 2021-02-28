@@ -14,13 +14,14 @@ use app\models\UploadForm;
 use yii\web\UploadedFile;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
+use app\components\Helper;
 
 class SiteController extends Controller
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -46,7 +47,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -64,59 +65,37 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         return $this->render('index');
     }
 
     /**
-     * Displays upload form
-     * @return string
+     * @return string|Response
      */
     public function actionUpload()
     {
         $model = new UploadForm();
-        $badRows = [];
-        $goodRows = [];
 
         if(Yii::$app->request->isPost) {
             $model->csvFile = UploadedFile::getInstance($model, 'csvFile');
             if($model->process()) {
                 $handle = fopen($model->csvFile->tempName, "r");
-                $firstRowFlag = true;
+                if($handle) {
+                    $result = Helper::dataProcessor($handle);
+                    $goodRows = $result['goodRows'];
+                    $badRows = $result['badRows'];
+                    if(!$badRows) {
+                        Yii::$app->session->setFlash('fileSuccessfullyProcessed', count($goodRows));
+                    } else {
+                        Yii::$app->session->setFlash('fileNotSuccessfullyProcessed', [
+                            'good' => count($goodRows),
+                            'bad' => implode(', ', $badRows),
+                            'badCount' => count($badRows)
+                        ]);
+                    }
+                }
 
-                while (($data = fgetcsv($handle, 1000, ",")) !== false)
-                {
-                    if($firstRowFlag) {
-                        $firstRowFlag = false;
-                        continue;
-                    }
-                    $testTaker = $data[1] ?? '';
-                    $correctAnswer = $data[2] ?? 0;
-                    $incorrectAnswer = $data[3] ?? 0;
-                    if($testTaker && $correctAnswer && $incorrectAnswer){
-                        $testResults = new TestResults();
-                        $testResults->test_taker = $testTaker;
-                        $testResults->correct_answers = $correctAnswer;
-                        $testResults->incorrect_answers = $incorrectAnswer;
-                        if($testResults->save()) {
-                            $goodRows[] = $testTaker;
-                        } else {
-                            if($testResults->getErrors('test_taker')) {
-                                $badRows[] = $testTaker;
-                            }
-                        }
-                    }
-                }
-                if(!$badRows) {
-                    Yii::$app->session->setFlash('fileSuccessfullyProcessed', count($goodRows));
-                } else {
-                    Yii::$app->session->setFlash('fileNotSuccessfullyProcessed', [
-                        'good' => count($goodRows),
-                        'bad' => implode(', ', $badRows),
-                        'badCount' => count($badRows)
-                    ]);
-                }
                 return $this->refresh();
             }
         }
@@ -130,7 +109,7 @@ class SiteController extends Controller
      * Displays grid
      * @return string
      */
-    public function actionList()
+    public function actionList(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => TestResults::find()->orderBy(['id' => SORT_DESC]),
@@ -231,7 +210,7 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
@@ -261,7 +240,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout()
+    public function actionAbout(): string
     {
         return $this->render('about');
     }
