@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "test_results".
@@ -12,7 +12,7 @@ use Yii;
  * @property int $correct_answers
  * @property int $incorrect_answers
  */
-class TestResults extends \yii\db\ActiveRecord
+class TestResults extends ActiveRecord
 {
     /**
      * {@inheritdoc}

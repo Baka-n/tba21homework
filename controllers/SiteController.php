@@ -12,9 +12,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\UploadForm;
 use yii\web\UploadedFile;
-use yii\data\Pagination;
 use yii\data\ActiveDataProvider;
-use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 
 class SiteController extends Controller
@@ -164,36 +162,45 @@ class SiteController extends Controller
         return $this->redirect(['index']);
     }
 
+    /**
+     * @return array|bool[]|string
+     */
     public function actionCreate()
     {
         $model = new TestResults();
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            Yii::$app->response->format = Response::FORMAT_JSON;
             if(!isset(Yii::$app->request->post()['ajax'])) {
                 $model->save();
                 return ['success' => true];
             }
             return ActiveForm::validate($model);
         } else {
-            return $this->renderAjax('create', [
+            return $this->renderAjax('_form', [
                 'model' => $model,
+                'type' => 'create'
             ]);
         }
     }
 
+    /**
+     * @param $id
+     * @return array|bool[]|string
+     */
     public function actionUpdate($id)
     {
         $model = TestResults::findOne($id);
         if ($model->load(Yii::$app->request->post())  ) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            Yii::$app->response->format = Response::FORMAT_JSON;
             if(!isset(Yii::$app->request->post()['ajax'])) {
                 $model->save();
                 return ['success' => true];
             }
             return ActiveForm::validate($model);
         }
-        return $this->renderAjax('update', [
+        return $this->renderAjax('_form', [
             'model' => $model,
+            'type' => 'update'
         ]);
     }
 

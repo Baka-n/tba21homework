@@ -9,9 +9,10 @@ use yii\bootstrap\Modal;
 <p>Test takers list with results</p>
 
 <p>
-
-    <?= Html::a(Yii::t('app', 'New Test Taker'), null, ['class' => 'btn btn-success modalLink', 'create-url' => Yii::$app->urlManager->createUrl('site/create')]) ?>
-
+    <?= Html::a(Yii::t('app', 'New Test Taker'), null, [
+            'class' => 'btn btn-success pjax-create-link',
+        'create-url' => Yii::$app->urlManager->createUrl('site/create')
+    ]) ?>
 </p>
 
 <?php Pjax::begin(['id' => 'pjax-container','clientOptions' => ['method' => 'POST']]);
@@ -54,19 +55,15 @@ use yii\bootstrap\Modal;
         'id'=>'create-modal',
         'size'=>'modal-lg'
     ]);
-
     echo "<div id='createModalContent'></div>";
-
     Modal::end();
 ?>
 <?php
-Modal::begin([
-    'header'=>'<h4>Update Model</h4>',
-    'id'=>'update-modal',
-    'size'=>'modal-lg'
-]);
-
-echo "<div id='updateModalContent'></div>";
-
-Modal::end();
+    Modal::begin([
+        'header'=>'<h4>Update Model</h4>',
+        'id'=>'update-modal',
+        'size'=>'modal-lg'
+    ]);
+    echo "<div id='updateModalContent'></div>";
+    Modal::end();
 ?>

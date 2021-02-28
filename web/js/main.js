@@ -1,19 +1,19 @@
 $(function(){
-    $(document).on('click', '.modalLink', function() {
+    $('.container').on('click', '.pjax-create-link', function() {
         $('#create-modal')
             .modal('show')
             .find('#createModalContent')
             .load($(this).attr('create-url'));
     });
 
-    $(document).on('click', '.pjax-update-link', function() {
+    $('.container').on('click', '.pjax-update-link', function() {
         $('#update-modal')
             .modal('show')
             .find('#updateModalContent')
             .load($(this).attr('update-url'));
     });
 
-    $(document).on('click', '.pjax-delete-link', function(e) {
+    $('.container').on('click', '.pjax-delete-link', function(e) {
         e.preventDefault();
         var deleteUrl = $(this).attr('delete-url');
         var pjaxContainer = $(this).attr('pjax-container');
@@ -31,51 +31,51 @@ $(function(){
         }
     });
 
-    $("body").on("beforeSubmit", "form#update-form", function () {
+    $('.container').on('beforeSubmit', 'form#update-form', function () {
         var form = $(this);
-        if (form.find(".has-error").length)
+        if (form.find('.has-error').length)
         {
             return false;
         }
         $.ajax({
-            url    : form.attr("action"),
-            type   : "post",
+            url    : form.attr('action'),
+            type   : 'post',
             data   : form.serialize(),
             success: function ()
             {
-                $("#update-modal").modal("toggle");
-                $.pjax.reload({container:"#pjax-container"});
+                $('#update-modal').modal('toggle');
+                $.pjax.reload({container:'#pjax-container'});
 
             },
             error  : function ()
             {
-                console.log("internal server error");
+                console.log('internal server error');
             }
         });
         return false;
     });
 
-    $("body").on("beforeSubmit", "form#create-form", function () {
+    $('.container').on('beforeSubmit', 'form#create-form', function () {
         var form = $(this);
-        if (form.find(".has-error").length)
+        if (form.find('.has-error').length)
         {
             return false;
         }
         $.ajax({
-            url    : form.attr("action"),
-            type   : "POST",
+            url    : form.attr('action'),
+            type   : 'POST',
             data   : form.serialize(),
             success: function ()
             {
-                $("#create-modal").modal("toggle");
-                $.pjax.reload({container:"#pjax-container"});
+                $('#create-modal').modal('toggle');
+                $.pjax.reload({container:'#pjax-container'});
 
             },
             error  : function ()
             {
-                console.log("internal server error");
+                console.log('internal server error');
             }
         });
         return false;
     });
-})
+});
