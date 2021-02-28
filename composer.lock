@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9cd87f007dcd9d8cf647fb718b0384f8",
+    "content-hash": "bc0d97ae0b561cab254169bf84afeb38",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -21,6 +21,24 @@
             },
             "require": {
                 "bower-asset/jquery": ">=1.9.1,<4.0"
+            },
+            "type": "bower-asset",
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "bower-asset/chart-js",
+            "version": "v2.9.4",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:nnnick/Chart.js.git",
+                "reference": "9bd4cf82fda9f50a5fb50b72843e06ab88124278"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nnnick/Chart.js/zipball/9bd4cf82fda9f50a5fb50b72843e06ab88124278",
+                "reference": "9bd4cf82fda9f50a5fb50b72843e06ab88124278"
             },
             "type": "bower-asset",
             "license": [
@@ -367,6 +385,54 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/master"
             },
             "time": "2020-06-29T00:56:53+00:00"
+        },
+        {
+            "name": "practically/yii2-chartjs",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Practically/yii2-chartjs.git",
+                "reference": "d4a8743d6821f10bfe7dc49149786c30c4c7f858"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Practically/yii2-chartjs/zipball/d4a8743d6821f10bfe7dc49149786c30c4c7f858",
+                "reference": "d4a8743d6821f10bfe7dc49149786c30c4c7f858",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "^2.0"
+            },
+            "require-dev": {
+                "bower-asset/chart-js": "^2.7",
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^2.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "practically\\chartjs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Ade Attwood",
+                    "email": "ade@practically.io",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Neil Davies",
+                    "email": "neil@practically.io",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "Chart js wrapper for yii2 to help with rendering data charts",
+            "support": {
+                "issues": "https://github.com/Practically/yii2-chartjs/issues",
+                "source": "https://github.com/Practically/yii2-chartjs/tree/v1.0.2"
+            },
+            "time": "2020-03-23T10:27:24+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -5286,7 +5352,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6.0"
+        "php": ">=7.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"

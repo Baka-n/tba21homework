@@ -15,6 +15,7 @@ use yii\web\UploadedFile;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use app\components\Helper;
+use yii\db\Query;
 
 class SiteController extends Controller
 {
@@ -180,6 +181,37 @@ class SiteController extends Controller
         return $this->renderAjax('_form', [
             'model' => $model,
             'type' => 'update'
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionChart(): string
+    {
+        $query = (new Query())->from('test_results');
+        $sum_correct = $query->sum('correct_answers');
+        $sum_incorrect = $query->sum('incorrect_answers');
+        $avg_correct = $query->average('correct_answers');
+        $avg_incorrect = $query->average('incorrect_answers');
+
+        return $this->render('chart', [
+            'sum_correct' => $sum_correct,
+            'sum_incorrect' => $sum_incorrect,
+            'avg_correct' => $avg_correct,
+            'avg_incorrect' => $avg_incorrect,
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionChartTwo(): string
+    {
+        $data = TestResults::find()->orderBy('id DESC')->limit(25)->all();
+
+        return $this->render('chart_two', [
+            'data' => $data
         ]);
     }
 
