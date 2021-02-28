@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use app\models\TestResults;
 use Yii;
-use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -13,6 +12,10 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\UploadForm;
 use yii\web\UploadedFile;
+use yii\data\Pagination;
+use yii\data\ActiveDataProvider;
+use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 class SiteController extends Controller
 {
@@ -65,8 +68,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $db = Yii::$app->db->getIsActive();
-        var_dump($db);
         return $this->render('index');
     }
 
@@ -133,10 +134,66 @@ class SiteController extends Controller
      */
     public function actionList()
     {
-
+        $dataProvider = new ActiveDataProvider([
+            'query' => TestResults::find()->orderBy(['id' => SORT_DESC]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
 
         return $this->render('list', [
-//            'model' => $model,
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return bool[]|Response
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionDelete($id)
+    {
+        $model = TestResults::findOne($id);
+
+        $model->delete();
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['success' => true];
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionCreate()
+    {
+        $model = new TestResults();
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if(!isset(Yii::$app->request->post()['ajax'])) {
+                $model->save();
+                return ['success' => true];
+            }
+            return ActiveForm::validate($model);
+        } else {
+            return $this->renderAjax('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = TestResults::findOne($id);
+        if ($model->load(Yii::$app->request->post())  ) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if(!isset(Yii::$app->request->post()['ajax'])) {
+                $model->save();
+                return ['success' => true];
+            }
+            return ActiveForm::validate($model);
+        }
+        return $this->renderAjax('update', [
+            'model' => $model,
         ]);
     }
 
